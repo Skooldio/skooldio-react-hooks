@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Wrapper, CounterText, Button, Label, Input } from "./Components";
 
 const getInitialCounter = () =>
@@ -10,6 +10,7 @@ export const CounterPage = () => {
   const [initialCounter, setInitialCounter] = useState(0);
   const [counter, setCounter] = useState(0);
   const [loading, setLoading] = useState(false);
+  const inputEl = useRef(null);
 
   useEffect(() => {
     setLoading(true);
@@ -18,6 +19,12 @@ export const CounterPage = () => {
       setInitialCounter(initialCounter);
     });
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      inputEl.current.focus();
+    }
+  }, [loading]);
 
   useEffect(() => {
     let id;
@@ -50,6 +57,7 @@ export const CounterPage = () => {
       <Label>
         <span>Initial Counter</span>
         <Input
+          ref={inputEl}
           value={initialCounter}
           onChange={(e) => setInitialCounter(e.target.value)}
         />
