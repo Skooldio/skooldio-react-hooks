@@ -1,23 +1,41 @@
 import { useState, useEffect } from "react";
 import { Wrapper, CounterText, Button, Label, Input } from "./Components";
 
+const getInitialCounter = () =>
+  new Promise((res) => {
+    setTimeout(() => res(10), 1000);
+  });
+
 export const CounterPage = () => {
-  const [initialCounter, setInitialCounter] = useState(10);
-  const [counter, setCounter] = useState(initialCounter);
+  const [initialCounter, setInitialCounter] = useState(0);
+  const [counter, setCounter] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
+    getInitialCounter().then((initialCounter) => {
+      setLoading(false);
+      setInitialCounter(initialCounter);
+    });
+  }, []);
+
+  useEffect(() => {
+    let id;
     setCounter(initialCounter);
-    const id = setInterval(() => {
+    id = setInterval(() => {
       console.log("Countdown:", initialCounter);
       setCounter((prevCounter) =>
         prevCounter > 0 ? prevCounter - 1 : prevCounter
       );
     }, 1000);
+
     return () => {
-      clearInterval(id);
+      if (id) {
+        clearInterval(id);
+      }
     };
   }, [initialCounter]);
-
+  if (loading) return <Wrapper>Loading...</Wrapper>;
   return (
     <Wrapper>
       <CounterText>{counter}</CounterText>
