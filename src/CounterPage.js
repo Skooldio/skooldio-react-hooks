@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Wrapper, CounterText, Button, Label, Input } from "./Components";
 
 const getInitialCounter = () =>
@@ -42,25 +42,30 @@ export const CounterPage = () => {
       }
     };
   }, [initialCounter]);
+  console.log("re-render");
+  const decrement = useCallback(() => {
+    setCounter((prevCounter) => prevCounter - 1);
+  }, [setCounter]);
+  const increment = useCallback(() => {
+    setCounter((prevCounter) => prevCounter + 1);
+  }, [setCounter]);
+  const handleChange = useCallback(
+    (e) => {
+      setInitialCounter(e.target.value);
+    },
+    [setInitialCounter]
+  );
   if (loading) return <Wrapper>Loading...</Wrapper>;
   return (
     <Wrapper>
       <CounterText>{counter}</CounterText>
       <div>
-        <Button onClick={() => setCounter((prevCounter) => prevCounter - 1)}>
-          -1
-        </Button>{" "}
-        <Button onClick={() => setCounter((prevCounter) => prevCounter + 1)}>
-          +1
-        </Button>
+        <Button onClick={decrement}>-1</Button>{" "}
+        <Button onClick={increment}>+1</Button>
       </div>
       <Label>
         <span>Initial Counter</span>
-        <Input
-          ref={inputEl}
-          value={initialCounter}
-          onChange={(e) => setInitialCounter(e.target.value)}
-        />
+        <Input ref={inputEl} value={initialCounter} onChange={handleChange} />
       </Label>
     </Wrapper>
   );
