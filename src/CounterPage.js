@@ -1,16 +1,22 @@
 import { useState, useEffect } from "react";
-import { Wrapper, CounterText, Button } from "./Components";
+import { Wrapper, CounterText, Button, Label, Input } from "./Components";
 
 export const CounterPage = () => {
-  const [counter, setCounter] = useState(10);
+  const [initialCounter, setInitialCounter] = useState(10);
+  const [counter, setCounter] = useState(initialCounter);
 
   useEffect(() => {
-    setInterval(() => {
+    setCounter(initialCounter);
+    const id = setInterval(() => {
+      console.log("Countdown:", initialCounter);
       setCounter((prevCounter) =>
         prevCounter > 0 ? prevCounter - 1 : prevCounter
       );
     }, 1000);
-  }, []);
+    return () => {
+      clearInterval(id);
+    };
+  }, [initialCounter]);
 
   return (
     <Wrapper>
@@ -23,6 +29,13 @@ export const CounterPage = () => {
           +1
         </Button>
       </div>
+      <Label>
+        <span>Initial Counter</span>
+        <Input
+          value={initialCounter}
+          onChange={(e) => setInitialCounter(e.target.value)}
+        />
+      </Label>
     </Wrapper>
   );
 };
